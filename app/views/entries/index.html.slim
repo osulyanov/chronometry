@@ -1,0 +1,32 @@
+h1
+  | Time tracking
+.entry_container ng-controller='EntryCtrl'
+  .well
+    = form_tag '', 'ng-submit' => 'addEntry()', name: 'entry_form', class: 'form-inline'  do |f|
+      .form-group
+        = text_field_tag :date, '', class: 'form-control datepicker', placeholder: 'Date', 'ng-model' => 'newEntry.date', required: 'true', 'maxlength' => '254'
+      .form-group
+        = number_field_tag :minutes_worked, '', class: 'form-control', placeholder: 'Minutes worked', 'ng-model' => 'newEntry.minutes_worked', required: 'true', 'maxlength' => '4'
+      .form-group
+        = text_field_tag :task_description, '', class: 'form-control', placeholder: 'Task description', 'ng-model' => 'newEntry.task_description', required: 'true', 'maxlength' => '254'
+      = submit_tag 'Add', class: 'btn btn-default'
+  .bs-example
+    .panel.panel-default
+      .panel-heading To be Done
+      table.table
+        thead
+          tr
+            th Date
+            th Time
+            th Task description
+            th Remove Entry
+        tbody
+          tr ng-repeat="entry in entries | orderBy: '-date'" class='entries-list' ng-class="{'background-red': entry.minutes_worked < 60}"
+            td.entry_body.col-md-2
+              a{editable-bsdate="entry.date" e-datepicker-popup="dd/MM/yyyy" href="#" onbeforesave="checkDate($data)" onaftersave="saveEntry(entry)"}  {{ (entry.date | date:"dd/MM/yyyy") || 'empty' }}
+            td.entry_body.col-md-3
+              a{editable-text="entry.minutes_worked" href="#" onbeforesave="checkMinutesWorked($data)" onaftersave="saveEntry(entry)"} {{ entry.minutes_worked || "empty" }}
+            td.entry_body.col-md-5
+              a{editable-text="entry.task_description" href="#" onaftersave="saveEntry(entry)"} {{ entry.task_description || "empty" }}
+            td
+              button.btn.btn-xs.btn-danger ng-click='removeEntry(entry)'   Remove
